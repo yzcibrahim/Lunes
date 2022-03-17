@@ -1,0 +1,89 @@
+﻿@model IncomeExpenseViewModel
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = "Create";
+}
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Text" class="control-label"></label>
+                <input asp-for="Text" class="form-control" />
+                <span asp-validation-for="Text" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Price" class="control-label"></label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ImageBase64" class="control-label"></label>
+                <input type="file" id="selectedFile" name="selectedFile" /><img id="selectedImage" src="@Html.Raw(Model.ImageBase64)" width="30" />
+                <input type="hidden" asp-for="ImageBase64" />
+                <span asp-validation-for="ImageBase64" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Id" class="control-label"></label>
+                <input readonly="readonly" asp-for="Id" class="form-control" />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+
+    @*$(document).ready(function () {
+         $('#selectedImage').attr("src", @Html.Raw(Model.ImageBase64));
+});*@
+
+const fileInput = $('#selectedFile');
+
+// This is for storing the base64 strings
+let myFiles = {}
+// if you expect files by default, make this disabled
+// we will wait until the last file being processed
+let isFilesReady = true
+
+fileInput.change(function (event) {
+    const file = fileInput[0].files[0];
+    console.log(file);
+    getBase64(file)
+        .then((data) => {
+            $('#ImageBase64').val(data);
+            $('#selectedImage').attr("src", data);
+
+        })
+    //    .then(
+    //    (data) => ('#ImageBase64').val(data)
+    //      //  $('#selectedImage').attr("src", data);
+
+
+    //);
+
+});
+
+function getBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
+    </script>
+
+}
